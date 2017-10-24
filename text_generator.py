@@ -79,7 +79,7 @@ def trainNetwork(init_values, input, network_output, lstm_new_state, final_outpu
     
     over = True
     
-    L = np.array([[0 for i in range(len(vocabulary))] for j in range (30)])
+    L = np.array([[0 for i in range(len(vocabulary))] for j in range (70)])
     last_L = np.copy(L)
     t=0
     
