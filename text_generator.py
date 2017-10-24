@@ -8,7 +8,7 @@ from collections import deque
 GAMMA = 0.95
 REPLAY_MEMORY = 10000.
 BATCH = 32
-LOGFILE = "D:\Profiles\\thPetit\Documents\\trumptweets.txt" #BDDintelligente\\serveur.py"
+LOGFILE = "\trumptweets.txt"
 FILE  = open(LOGFILE)
 data = FILE.read()
 FILE.close()
