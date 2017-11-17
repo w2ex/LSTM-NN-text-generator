@@ -8,8 +8,8 @@ from collections import deque
 GAMMA = 0.95
 REPLAY_MEMORY = 10000.
 BATCH = 32
-LOGFILE = "\trumptweets.txt"
-FILE  = open(LOGFILE)
+LOGFILE = "trumptweets.txt" #BDDintelligente\\serveur.py"
+FILE  = open(LOGFILE, errors = 'ignore')
 data = FILE.read()
 FILE.close()
 #data = data.lower()
@@ -44,8 +44,8 @@ def createNetwork(input_size, lstm_size, num_layers, output_size, session):
         lstm_init_value = tf.placeholder(tf.float32, shape=(None, num_layers*2*lstm_size), name="lstm_init_value")
         
     with tf.name_scope('LSTM_layers'):
-        lstm_cells = [ tf.contrib.rnn.BasicLSTMCell(lstm_size, forget_bias=1.0, state_is_tuple=False) for i in range(num_layers)]
-        lstm = tf.contrib.rnn.MultiRNNCell(lstm_cells, state_is_tuple=False)
+        lstm_cells = [ tf.nn.rnn_cell.BasicLSTMCell(lstm_size, forget_bias=1.0, state_is_tuple=False) for i in range(num_layers)]
+        lstm = tf.nn.rnn_cell.MultiRNNCell(lstm_cells, state_is_tuple=False)
         
         outputs, lstm_new_state = tf.nn.dynamic_rnn(lstm, input, initial_state=lstm_init_value, dtype=tf.float32)
     
@@ -61,7 +61,7 @@ def createNetwork(input_size, lstm_size, num_layers, output_size, session):
         
     return lstm_init_value, input, network_output, lstm_new_state, final_outputs
     
-def trainNetwork(init_values, input, network_output, lstm_new_state, final_outputs, session):
+def trainNetwork(init_values, input, network_output, lstm_new_state, final_outputs, epochs, session):
     
     with tf.name_scope('Target'):
         y_batch = tf.placeholder(tf.float32, (None, None, len(vocabulary)))
@@ -79,7 +79,7 @@ def trainNetwork(init_values, input, network_output, lstm_new_state, final_outpu
     
     over = True
     
-    L = np.array([[0 for i in range(len(vocabulary))] for j in range (70)])
+    L = np.array([[0 for i in range(len(vocabulary))] for j in range (50)])
     last_L = np.copy(L)
     t=0
     
@@ -94,7 +94,7 @@ def trainNetwork(init_values, input, network_output, lstm_new_state, final_outpu
         print ("No network found. Creating a new network initialized randomly...")
     
     print("Learning started...")
-    for j in range(1):
+    for j in range(epochs):
         for i, char in enumerate(data) :
                 
             last_L = np.copy(L) # updating state variables
@@ -163,5 +163,6 @@ def run():
     print("Session created")
     init_values, input, network_output, lstm_new_state, final_outputs = createNetwork(len(vocabulary), 128, 2, len(vocabulary), sess)
     print("Network ready")
-    trainNetwork(init_values, input, network_output, lstm_new_state, final_outputs, sess)
+    epochs = 1
+    trainNetwork(init_values, input, network_output, lstm_new_state, final_outputs, epochs, sess)
     sess.close()
